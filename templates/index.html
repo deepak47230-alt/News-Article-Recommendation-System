@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NewsMatch — Article Recommendation</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">N</span><span>NewsMatch</span></div>
+    <span class="tagline">News that matches your interests</span>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">PERSONALIZED NEWS DISCOVERY</p>
+      <h1>Find your next<br><span>interesting read.</span></h1>
+      <p class="intro">Tell us what you care about. Our content-based recommendation model finds articles with related topics and keywords.</p>
+      <form method="post" class="search-form">
+        <label for="interests">What are you interested in?</label>
+        <div class="search-row">
+          <input id="interests" name="interests" type="text" value="{{ query }}" placeholder="e.g. artificial intelligence, cricket, climate change" required>
+          <button type="submit">Find articles <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="hint">Tip: enter one topic or several keywords.</p>
+      </form>
+    </section>
+    {% if message %}<div class="notice" role="status">{{ message }}</div>{% endif %}
+    {% if recommendations %}
+      <section class="results">
+        <div class="section-heading"><div><p class="eyebrow">YOUR READING LIST</p><h2>Recommended for you</h2></div><span class="result-count">{{ recommendations|length }} articles</span></div>
+        <div class="cards">
+          {% for article in recommendations %}
+          <article class="article-card">
+            <div class="card-top"><span class="category">{{ article.category }}</span><span class="score">Match {{ (article.score * 100)|round|int }}%</span></div>
+            <h3>{{ article.title }}</h3><p>{{ article.description }}</p>
+            <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">Read article <span aria-hidden="true">↗</span></a>
+          </article>
+          {% endfor %}
+        </div>
+        <p class="disclaimer">Match scores reflect text similarity in this demo, not article quality or factual accuracy.</p>
+      </section>
+    {% elif request.method == "GET" %}
+      <section class="examples"><p class="eyebrow">TRY A TOPIC</p><div class="topic-list"><span>Artificial Intelligence</span><span>Sports</span><span>Space</span><span>Environment</span><span>Health</span></div></section>
+    {% endif %}
+  </main>
+  <footer><span>NewsMatch</span><span>Built with Flask + TF-IDF</span></footer>
+</body>
+</html>
